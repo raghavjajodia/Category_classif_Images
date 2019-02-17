@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My ASP.NET Application</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='Site.css') }}">
+</head>
+
+<style>
+	#record { height: 15vh; }
+	#record.recording {
+		background: red;
+		background: -webkit-radial-gradient(center, ellipse cover, #ff0000 0%,lightgrey 75%,lightgrey 100%,#7db9e8 100%);
+		background: -moz-radial-gradient(center, ellipse cover, #ff0000 0%,lightgrey 75%,lightgrey 100%,#7db9e8 100%);
+		background: radial-gradient(center, ellipse cover, #ff0000 0%,lightgrey 75%,lightgrey 100%,#7db9e8 100%);
+	}
+</style>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <canvas id="analyser" width="512" height="128"></canvas>
+        </div>
+        <div class="col-md-2">
+            <img id="record" src="{{ url_for('static', filename='Images/mic128.png') }}" onclick="toggleRecording(this);">
+        </div>
+        <div class="col-md-2">
+            <a id="save" href="#"><img src="{{ url_for('static', filename='Images/save.svg') }}"></a>
+        </div>
+    </div>
+    <!-- <div class="row">
+        <canvas id="wavedisplay" display="hidden" width="512" height="128"></canvas>
+    </div> -->
+    <div class="row">
+        <div id="waveform"></div>
+
+        <div style="text-align: center">
+            <button class="btn btn-primary" id="playButton" onclick="wavesurfer.playPause()">
+                Play/Pause
+            </button>
+
+            <p class="row">
+                <div class="col-xs-1">
+                    <i class="glyphicon glyphicon-zoom-in"></i>
+                </div>
+
+                <div class="col-xs-10">
+                    <input id="slider" type="range" min="1" max="200" value="1" style="width: 100%" />
+                </div>
+
+                <div class="col-xs-1">
+                    <i class="glyphicon glyphicon-zoom-out"></i>
+                </div>
+            </p>
+        </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.2.3/wavesurfer.min.js"></script>
+<script src="{{ url_for('static', filename='wavesurferPlayer.js') }}"></script>
+<script src="{{ url_for('static', filename='recorder.js') }}"></script>
+<script src="{{ url_for('static', filename='main.js') }}"></script>
+<script src="{{ url_for('static', filename='audiodisplay.js') }}"></script>
+
+</body>
+</html>
+
+<!--
+<div id="controls">
+    <img id="record" src="~/Images/mic128.png" onclick="toggleRecording(this);">
+    <a id="save" href="#"><img src="~/Images/save.svg"></a>
+</div>-->
+
+<!--<canvas id="wavedisplay" display="hidden" width="512" height="128"></canvas>
+<div id="waveform"></div>
+
+<div style="text-align: center">
+    <button class="btn btn-primary" onclick="wavesurfer.playPause()">
+        <i class="glyphicon glyphicon-play"></i>
+        Play
+    </button>
+
+    <p class="row">
+        <div class="col-xs-1">
+            <i class="glyphicon glyphicon-zoom-in"></i>
+        </div>
+
+        <div class="col-xs-10">
+            <input id="slider" type="range" min="1" max="200" value="1" style="width: 100%" />
+        </div>
+
+        <div class="col-xs-1">
+            <i class="glyphicon glyphicon-zoom-out"></i>
+        </div>
+    </p>
+</div>-->

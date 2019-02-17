@@ -1,5 +1,7 @@
 # Category_classif_Images
 Built a web app in Flask for generic category classification from images. 
+This repository has code to train VGG16 CNN classification model using Transfer learning and Fine Tuning
+This repository also has code to deploy this trained model on web service and exposes endpoints to call this webservice for category prediction
 
 ## Assumptions
 - Code is generic for n number of categories
@@ -21,4 +23,8 @@ Code for step1 and step2 can be found in TransferLearning.py. Step3 - finetuning
 
 ## WebApp
 - This model is hosted on WebApp whose backed is built on Flask (Python)
-- Just Run app.py to start the server
+- Just Run app.py inside app directory to start the server and deploy the model in server
+
+## How to call endpoints?
+- End point to predict category: Image is sent as binary data in POST request on URL /CECCategoryClassifier 
+- End point to report incorrectly predicted value and save this in a file. End point format /ReportIncorrect?traceId=abcd&correctLabel=1
