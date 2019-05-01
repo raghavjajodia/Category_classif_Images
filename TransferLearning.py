@@ -42,30 +42,34 @@ from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense
 from keras import applications
 from keras.utils import np_utils
+import os
+import argparse
+import json
+#import PIL
 
 # dimensions of our images.
-img_width, img_height = 150, 150
+#img_width, img_height = 150, 150
 
-top_model_weights_path = 'bottleneck_fc_model.h5'
-train_data_dir = 'data/train'
-validation_data_dir = 'data/validation'
-epochs = 50
-batch_size = 16
-number_of_classes = 3
-train_class_sizes = [10656, 8240, 10544]
+#top_model_weights_path = 'bottleneck_fc_model.h5'
+#train_data_dir = 'data/train'
+#validation_data_dir = 'data/validation'
+#epochs = 50
+#batch_size = 16
+#number_of_classes = 3
+#train_class_sizes = [10656, 8240, 10544]
 # train_class1 = 10656
 # train_class2 = 8240
 # train_class3 = 10544
-validation_class_sizes  [3680, 2576, 3584]
+#validation_class_sizes  [3680, 2576, 3584]
 
 # validation_class1 = 3680
 # validation_class2 = 2576
 # validation_class3 = 3584
 
-nb_train_samples = sum(train_class_sizes)
-nb_validation_samples = sum(validation_class_sizes)
+#nb_train_samples = sum(train_class_sizes)
+#nb_validation_samples = sum(validation_class_sizes)
 
-def save_bottlebeck_features():
+def save_bottlebeck_features(train_data_dir, validation_data_dir, img_width, img_height, batch_size, features_path,nb_train_samples,nb_validation_samples):
     datagen = ImageDataGenerator(rescale=1. / 255)
 
     # build the VGG16 network
@@ -79,7 +83,7 @@ def save_bottlebeck_features():
         shuffle=False)
     bottleneck_features_train = model.predict_generator(
         generator, nb_train_samples // batch_size)
-    np.save('bottleneck_features_train.npy', bottleneck_features_train)
+    np.save(os.path.join(features_path, 'bottleneck_features_train.npy'), bottleneck_features_train)
 
     generator = datagen.flow_from_directory(
         validation_data_dir,
@@ -89,11 +93,11 @@ def save_bottlebeck_features():
         shuffle=False)
     bottleneck_features_validation = model.predict_generator(
         generator, nb_validation_samples // batch_size)
-    np.save('bottleneck_features_validation.npy',bottleneck_features_validation)
+    np.save(os.path.join(features_path, 'bottleneck_features_validation.npy'),bottleneck_features_validation)
 
 
-def train_top_model():
-    train_data = np.load('bottleneck_features_train.npy')
+def train_top_model(features_path, number_of_classes, top_model_weights_path, epochs, batch_size, train_class_sizes, validation_class_sizes):
+    train_data = np.load(os.path.join(features_path, 'bottleneck_features_train.npy'))
     train_labels_list = []
     for i in range(number_of_classes):
         train_labels_list = train_labels_list + [i] * train_class_sizes[i]
@@ -101,7 +105,7 @@ def train_top_model():
     train_labels = np.array(train_labels_list)
     train_labels = np_utils.to_categorical(train_labels)
 
-    validation_data = np.load('bottleneck_features_validation.npy')
+    validation_data = np.load(features_path + 'bottleneck_features_validation.npy')
     validation_labels_list = []
     for i in range(number_of_classes):
         validation_labels_list = validation_labels_list + [i] * validation_class_sizes[i]
@@ -125,5 +129,35 @@ def train_top_model():
     model.save_weights(top_model_weights_path)
 
 
-save_bottlebeck_features()
-train_top_model()
+    
+if __name__ == '__main__':
+
+    # Define arguments
+    parser = argparse.ArgumentParser(description='Transfer Learning')
+    parser.add_argument('--data_train', type=str, default='../data/train',
+                        help='location of data where train folders are present')
+    parser.add_argument('--data_val', type=str, default='../data/validation',
+                        help='location of data where validation folders are present')
+    parser.add_argument('--batch_size', type=int, default=16, metavar='N',
+                        help='input batch size for training (default: 64)')
+    parser.add_argument('--model_weights_path', type=str, default='weights.pth',
+                        help='path to save the top layer model')
+    parser.add_argument('--features_path', type=str, default='../data/features/vgg_tensorflow/',
+                        help='path to save the bottleneck features')
+    parser.add_argument('--input_dim', type=int, default=150, help='input height and width of image')
+    parser.add_argument('--epochs', type=int, default=50, help='number of epochs')
+    parser.add_argument('--num_classes', type=int, default=3, help='number of classes')
+    
+
+    # Parse arguments
+    args = parser.parse_args()
+    print(json.dumps(args.__dict__, sort_keys=True, indent=4) + '\n')
+    
+    #Hardcoded
+    train_class_sizes = [64]*1000
+    validation_class_sizes = [64]*1000
+    nb_train_samples = sum(train_class_sizes)
+    nb_validation_samples = sum(validation_class_sizes)
+    
+    save_bottlebeck_features(args.data_train, args.data_val, args.input_dim, args.input_dim, args.batch_size, args.features_path, nb_train_samples,nb_validation_samples)
+    train_top_model(args.features_path, arg.num_classes, arg.model_weights_path, arg.epochs, arg.batch_size, train_class_sizes, validation_class_sizes)
