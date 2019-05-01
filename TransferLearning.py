@@ -160,4 +160,4 @@ if __name__ == '__main__':
     nb_validation_samples = sum(validation_class_sizes)
     
     save_bottlebeck_features(args.data_train, args.data_val, args.input_dim, args.input_dim, args.batch_size, args.features_path, nb_train_samples,nb_validation_samples)
-    train_top_model(args.features_path, arg.num_classes, arg.model_weights_path, arg.epochs, arg.batch_size, train_class_sizes, validation_class_sizes)
+    train_top_model(args.features_path, args.num_classes, args.model_weights_path, args.epochs, args.batch_size, train_class_sizes, validation_class_sizes)
