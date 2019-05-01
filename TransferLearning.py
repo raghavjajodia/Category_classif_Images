@@ -105,7 +105,7 @@ def train_top_model(features_path, number_of_classes, top_model_weights_path, ep
     train_labels = np.array(train_labels_list)
     train_labels = np_utils.to_categorical(train_labels)
 
-    validation_data = np.load(features_path + 'bottleneck_features_validation.npy')
+    validation_data = np.load(os.path.join(features_path, 'bottleneck_features_validation.npy'))
     validation_labels_list = []
     for i in range(number_of_classes):
         validation_labels_list = validation_labels_list + [i] * validation_class_sizes[i]
@@ -117,7 +117,7 @@ def train_top_model(features_path, number_of_classes, top_model_weights_path, ep
     model.add(Flatten(input_shape=train_data.shape[1:]))
     model.add(Dense(256, activation='relu'))
     model.add(Dropout(0.5))
-    model.add(Dense(3, activation='softmax'))
+    model.add(Dense(number_of_classes, activation='softmax'))
 
     model.compile(optimizer='adam',
                   loss='categorical_crossentropy', metrics=['accuracy'])
